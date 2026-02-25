@@ -1,20 +1,16 @@
-using System;
 using UnityEngine;
 
 public class FuseSocket : MonoBehaviour
 {
-    private FuseBox myFuseBox;
-
-    public bool haveFuse = false;
-
-    private void Start()
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
     {
-        myFuseBox = transform.root.gameObject.GetComponentInChildren<FuseBox>();
-        myFuseBox.fuseSockets += 1;
+        
     }
 
-    public void SocketRepaired()
+    // Update is called once per frame
+    void Update()
     {
-        myFuseBox.workingFuses += 1;
+        
     }
 }

@@ -1,36 +1,18 @@
 using System;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class Fuse : MonoBehaviour
 {
-    public Sprite[] fuseSprites;
-    
-    public FuseSocket myFuseSocket;
+    public FuseSocket fuseSocket;
 
-    public bool _isConnected = false;
-    public bool _isDragged = false;
+    public bool IsBroken = false;
+    private bool _isDragged = false;
+    private bool _isConnected = false;
+    private Vector3 _originalPosition;
 
-    private void Awake()
+    private void Start()
     {
-        bool IsBroken = Random.value < 0.5f;
-
-        if (IsBroken)
-        {
-            _isConnected = false;
-            gameObject.GetComponent<SpriteRenderer>().sprite = fuseSprites[1];
-        }
-        else
-        {
-            _isConnected = true;
-            myFuseSocket.SocketRepaired();
-        }
-        
-        if (myFuseSocket != null)
-        {
-            myFuseSocket.haveFuse = true;
-            SetPosition(myFuseSocket.transform.position);
-        }
+        _originalPosition = transform.position;
     }
 
     private void Update()
@@ -42,57 +24,60 @@ public class Fuse : MonoBehaviour
             converted.z = 0;
 
             SetPosition(converted);
+
+            //Vector3 endWireDifference = converted - _endWire.position;
+            
+            //if (endWireDifference.magnitude < 0.5f)
+            //{
+            //    transform.position = _endWire.position;
+            //    _isDragged = false;
+            //    _isConnected = true;
+            //    SendThatIsConnected();
+                
+            //    SetPosition(_endWire.position);
+            //}
         }
     }
 
-    public void SetPosition(Vector3 position)
+    private void SendThatIsConnected()
+    {
+        WireBox wireBox = transform.root.gameObject.GetComponentInChildren<WireBox>();
+        wireBox.connectedWires += 1;
+        wireBox.WinCondition();
+    }
+
+    void SetPosition(Vector3 position)
     {
         transform.position = position;
     }
 
+    public void ResetPosition()
+    {
+        _isConnected = false;
+        _isDragged = false;
+        SetPosition(_originalPosition);
+    }
+
     private void OnMouseDown()
     {
-        if (_isConnected == false)
+        if (_isConnected != true)
         {
             _isDragged = true;
-            
-            myFuseSocket.haveFuse = false;
-            gameObject.GetComponent<SpriteRenderer>().sortingOrder = 3;
         }
     }
-
+    
     private void OnMouseUp()
     {
-        if (_isConnected == false)
+        if (_isConnected != true)
         {
             _isDragged = false;
-            gameObject.GetComponent<SpriteRenderer>().sortingOrder = 2;
+            ResetPosition();
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
+    public bool IsConnected
     {
-        if (other.gameObject.GetComponent<FuseDrop>() != null) { Destroy(gameObject) ;}
-        
-        if (other.gameObject.GetComponent<FuseSocket>() == null) { return; }
-        
-        if (other.gameObject.GetComponent<FuseSocket>().haveFuse == true) { return; }
-        
-        if (myFuseSocket != null) { myFuseSocket.haveFuse = false; }
-        
-        Repaired(other);
-    }
-
-    private void Repaired(Collision2D fuseSocket)
-    {
-        myFuseSocket = fuseSocket.gameObject.GetComponent<FuseSocket>();
-        myFuseSocket.haveFuse = true;
-        
-        _isDragged = false;
-        _isConnected = true;
-        transform.parent = fuseSocket.gameObject.transform;
-        SetPosition(myFuseSocket.transform.position);
-        
-        myFuseSocket.SocketRepaired();
+        get => _isConnected;
+        set => _isConnected = value;
     }
 }

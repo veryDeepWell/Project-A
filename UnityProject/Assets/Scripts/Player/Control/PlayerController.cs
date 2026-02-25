@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour, IControllable
     private InputSystem _inputSystem;
     private Interact _interact;
     private Rigidbody2D _rb;
+    private Animator animator;
+    private Vector2 readMovement;
     
     public bool CanControl = true;
     
@@ -22,11 +24,20 @@ public class PlayerController : MonoBehaviour, IControllable
         _rb = GetComponent<Rigidbody2D>();
     }
 
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
+    private void Update()
+    {
+        readMovement = ReadMovement();
+        Animation();
+    }
     private void FixedUpdate()
     {
         if (CanControl)
         {
-            Move(ReadMovement());
+            Move(readMovement);
         }
     }
     
@@ -49,6 +60,15 @@ public class PlayerController : MonoBehaviour, IControllable
     {
         direction.Normalize();
         transform.Translate(direction * (_speed * Time.deltaTime));
+    }
+
+    private void Animation()
+    {
+        MoveAnimation.OnMoving(animator, (ReadMovement() != new Vector2(0,0)));
+        if (readMovement.x != 0)
+            {
+                MoveAnimation.Revers(transform, (readMovement.x > 0));
+            }
     }
 
     public void Interact(InputAction.CallbackContext obj)

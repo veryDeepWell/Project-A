@@ -5,15 +5,34 @@ using Random = UnityEngine.Random;
 
 public class FuseBox : MonoBehaviour
 {
-    public int fuseSockets;
-    public int workingFuses;
+    public List<Fuse> Fuses;
+    public int BrokenFuses = 0;
+    public int ReplacedFuses = 0;
+
+    private void Awake()
+    {
+        foreach (Fuse f in Fuses)
+        {
+            Random.seed = (int)DateTime.Now.Ticks;
+        }
+    }
+
+    public void BreakFuses()
+    {
+        
+    }
     
     public void WinCondition()
     {
-        if (fuseSockets - 1 == workingFuses)
+        if (ReplacedFuses == Fuses.Count)
         {
-            transform.root.gameObject.GetComponent<InteractBehaviour>().ReturnControl();
+            transform.parent.gameObject.GetComponent<InteractBehaviour>().ReturnControl();
             Destroy(gameObject);
         }
+    }
+
+    private void Start()
+    {
+        BreakFuses();
     }
 }

@@ -1,21 +1,2 @@
-# Установить поведение по умолчанию для всех файлов
+# Auto detect text files and perform LF normalization
 * text=auto
-
-# Явно указать бинарные файлы Unity
-*.unitybinary binary
-*.prefab binary
-*.asset binary
-*.mat binary
-*.meta binary
-*.png binary
-*.jpg binary
-*.fbx binary
-*.obj binary
-
-# Указать текстовые файлы
-*.cs text
-*.shader text
-*.txt text
-*.md text
-.gitignore text
-.gitattributes text
